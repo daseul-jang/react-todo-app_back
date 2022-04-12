@@ -5,6 +5,7 @@ import com.example.todo.dto.TodoDTO;
 import com.example.todo.model.TodoEntity;
 import com.example.todo.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +43,7 @@ public class TodoController {
             entity.setUserId(userId);
 
             // 4. 서비스를 이용해 Todo 엔티티 생성.
-            List<TodoEntity> entities = service.create(entity);
+            List<TodoEntity> entities = service.create(entity, Sort.by(Sort.Direction.DESC, "id"));
 
             // 5. 자바 스트림을 이용, 리턴된 엔티티 리스트를 TodoDTO 리스트로 변환.
             List<TodoDTO> dtos = entities.stream().map(TodoDTO::new).collect(Collectors.toList());
@@ -64,7 +65,7 @@ public class TodoController {
     @GetMapping
     public ResponseEntity<?> retrieveTodoList(@AuthenticationPrincipal String userId) {
         // 서비스 클래스의 retrieve 메서드를 사용해 Todo 리스트를 가져옴.
-        List<TodoEntity> entities = service.retrieve(userId);
+        List<TodoEntity> entities = service.retrieve(userId, Sort.by(Sort.Direction.DESC, "id"));
         List<TodoDTO> dtos = entities.stream().map(TodoDTO::new).collect(Collectors.toList());
 
         ResponseDTO<TodoDTO> response = ResponseDTO.<TodoDTO>builder().data(dtos).build();
@@ -78,7 +79,7 @@ public class TodoController {
         entity.setUserId(userId);   // 아이디 설정
 
         // 서비스를 이용해 entity를 수정.
-        List<TodoEntity> entities = service.update(entity);
+        List<TodoEntity> entities = service.update(entity, Sort.by(Sort.Direction.DESC, "id"));
         List<TodoDTO> dtos = entities.stream().map(TodoDTO::new).collect(Collectors.toList());
 
         ResponseDTO<TodoDTO> response = ResponseDTO.<TodoDTO>builder().data(dtos).build();
@@ -92,7 +93,7 @@ public class TodoController {
             TodoEntity entity = TodoDTO.toEntity(dto);
             entity.setUserId(userId);
 
-            List<TodoEntity> entities = service.delete(entity);
+            List<TodoEntity> entities = service.delete(entity, Sort.by(Sort.Direction.DESC, "id"));
             List<TodoDTO> dtos = entities.stream().map(TodoDTO::new).collect(Collectors.toList());
             ResponseDTO<TodoDTO> response = ResponseDTO.<TodoDTO>builder().data(dtos).build();
 

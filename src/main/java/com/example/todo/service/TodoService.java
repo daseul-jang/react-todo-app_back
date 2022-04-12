@@ -4,6 +4,7 @@ import com.example.todo.model.TodoEntity;
 import com.example.todo.persistence.TodoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,13 +27,13 @@ public class TodoService {
         return savedEntity.getTitle();
     }
 
-    public List<TodoEntity> create(final TodoEntity entity) {
+    public List<TodoEntity> create(final TodoEntity entity, Sort sort) {
         validate(entity);
         repository.save(entity);
 
         log.info("Entity ID : {} is saved.", entity.getId());
 
-        return repository.findByUserId(entity.getUserId());
+        return repository.findByUserId(entity.getUserId(), sort);
     }
 
     private void validate(final TodoEntity entity) {
@@ -48,11 +49,11 @@ public class TodoService {
     }
 
     // 해당 사용자의 ToDoList 출력
-    public List<TodoEntity> retrieve(final String userId) {
-        return repository.findByUserId(userId);
+    public List<TodoEntity> retrieve(final String userId, Sort sort) {
+        return repository.findByUserId(userId, sort);
     }
 
-    public List<TodoEntity> update(final TodoEntity entity) {
+    public List<TodoEntity> update(final TodoEntity entity, Sort sort) {
         // 1. 저장할 엔티티가 유효한지 확인.
         validate(entity);
 
@@ -69,10 +70,10 @@ public class TodoService {
         });
 
         // 사용자의 모든 TodoList 리턴.
-        return retrieve(entity.getUserId());
+        return retrieve(entity.getUserId(), sort);
     }
 
-    public List<TodoEntity> delete(final TodoEntity entity) {
+    public List<TodoEntity> delete(final TodoEntity entity, Sort sort) {
         validate(entity);
 
         try {
@@ -83,6 +84,6 @@ public class TodoService {
             throw new RuntimeException("error deleting entity " + entity.getId());
         }
 
-        return retrieve(entity.getUserId());
+        return retrieve(entity.getUserId(), sort);
     }
 }
