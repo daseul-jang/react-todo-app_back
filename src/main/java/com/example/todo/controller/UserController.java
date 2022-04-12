@@ -49,6 +49,13 @@ public class UserController {
         }
     }
 
+    @PostMapping("/email-check")
+    public ResponseEntity<Boolean> emailCheck(@RequestBody String email) {
+        // 파라미터에 붙은 쌍따옴표 제거
+        email = email.replaceAll("\\\"","");
+        return ResponseEntity.ok(userService.emailCheck(email));
+    }
+
     @PostMapping("/signin")
     public ResponseEntity<?> authenticate(@RequestBody UserDTO userDTO) {
         UserEntity user = userService.getByCredentials(

@@ -15,18 +15,24 @@ public class UserService {
     private UserRepository userRepository;
 
     public UserEntity create(final UserEntity userEntity) {
-        if(userEntity == null || userEntity.getEmail() == null) {
+        if(userEntity == null || userEntity.getEmail() == null
+        || userEntity.equals("") || userEntity.getEmail().equals("")) {
             throw new RuntimeException("Invalid arguments");
         }
 
         final String email = userEntity.getEmail();
 
+        // 이메일 중복일때
         if(userRepository.existsByEmail(email)) {
             log.warn("Email already exists {}", email);
             throw new RuntimeException("Email already exists");
         }
 
         return userRepository.save(userEntity);
+    }
+
+    public boolean emailCheck(final String email) {
+        return userRepository.existsByEmail(email);
     }
 
     public UserEntity getByCredentials(final String email, final String password,
