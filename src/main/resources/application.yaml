@@ -1,11 +1,11 @@
 spring:
-  profiles:
+  config:
     activate:
       on-profile: dev
 
 ---
 
 spring:
-  profiles:
+  config:
     activate:
       on-profile: prod
